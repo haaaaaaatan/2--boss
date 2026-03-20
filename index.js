@@ -318,3 +318,4 @@ client.on("messageCreate", (message) => {
   message.reply(`🗑️ **${boss.name}** のデータをリセットしました。`);
 });
 
+const LOG_CHANNEL = "14844132223058018304";
