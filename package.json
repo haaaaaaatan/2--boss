@@ -1,0 +1,10 @@
+{
+  "name": "lng2-boss",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "dependencies": {
+    "discord.js": "^14.14.1",
+    "node-cron": "^3.0.2"
+  }
+}
