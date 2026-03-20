@@ -1,3 +1,41 @@
+client.on("messageCreate", (message) => {
+  if (message.author.bot) return;
+
+  const parts = message.content.trim().split(" ");
+  if (parts.length !== 2) return;
+
+  const bossKey = parts[0];
+  const timeStr = parts[1];
+
+  // ボス検索（名前 or 番号）
+  const boss =
+    BOSSES.find(b => b.name === bossKey) ||
+    BOSSES.find(b => b.id == bossKey);
+
+  if (!boss) {
+    return message.reply("❌ エラー：ボスが存在しません");
+  }
+
+  const killTime = parseTime(timeStr);
+  if (!killTime) {
+    return message.reply("❌ エラー：時間形式が不正です");
+  }
+
+  const { next, notify } = calcNextSpawn(killTime, boss.respawn);
+
+  const data = KILL_DATA.find(d => d.bossId === boss.id);
+  data.lastKill = killTime;
+  data.nextSpawn = next;
+  data.notifyTime = notify;
+  data.notifyId = null;
+
+  message.reply(
+    `✅ 記録しました\n` +
+    `討伐：${killTime}\n` +
+    `次湧き：${next}\n` +
+    `通知予定：${notify}`
+  );
+});
 setInterval(() => {
   const now = new Date();
 
