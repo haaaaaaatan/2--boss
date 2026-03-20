@@ -278,3 +278,43 @@ client.on("messageCreate", (message) => {
    11. BOT 起動
 ---------------------------------------- */
 client.login(process.env.TOKEN);
+client.on("messageCreate", (message) => {
+  if (message.author.bot) return;
+
+  const parts = message.content.trim().split(" ");
+  if (parts[0] !== "/reset") return;
+
+  // /reset all → 全リセット
+  if (parts[1] === "all") {
+    KILL_DATA.forEach(d => {
+      d.lastKill = null;
+      d.nextSpawn = null;
+      d.notifyTime = null;
+      d.notifyId = null;
+    });
+
+    saveData();
+    return message.reply("🗑️ 全ボスのデータをリセットしました。");
+  }
+
+  // /reset ID or 名前
+  const key = parts[1];
+  const boss =
+    BOSSES.find(b => b.id == key) ||
+    BOSSES.find(b => b.name === key);
+
+  if (!boss) {
+    return message.reply("❌ エラー：ボスが見つかりません");
+  }
+
+  const data = KILL_DATA.find(d => d.bossId === boss.id);
+  data.lastKill = null;
+  data.nextSpawn = null;
+  data.notifyTime = null;
+  data.notifyId = null;
+
+  saveData();
+
+  message.reply(`🗑️ **${boss.name}** のデータをリセットしました。`);
+});
+
