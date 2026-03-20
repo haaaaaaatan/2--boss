@@ -1,3 +1,22 @@
+setInterval(() => {
+  const now = new Date();
+
+  KILL_DATA.forEach(data => {
+    if (!data.notifyTime || data.notifyId) return;
+
+    if (now >= data.notifyTime) {
+      const boss = BOSSES.find(b => b.id === data.bossId);
+
+      // 通知送信
+      const channel = client.channels.cache.get("通知を送るチャンネルID");
+      if (channel) {
+        channel.send(`🔔 **${boss.name}** の湧き10分前です！`);
+      }
+
+      data.notifyId = "sent";
+    }
+  });
+}, 60000);
 function calcNextSpawn(killTime, respawnMin) {
   const next = new Date(killTime.getTime() + respawnMin * 60000);
   const notify = new Date(next.getTime() - 10 * 60000);
