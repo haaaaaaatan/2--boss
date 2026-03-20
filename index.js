@@ -1,3 +1,10 @@
+const KILL_DATA = BOSSES.map(boss => ({
+  bossId: boss.id,
+  lastKill: null,
+  nextSpawn: null,
+  notifyId: null,
+  notifyTime: null
+}));
 const BOSSES = [
   { id: 1, name: "クイーンアント", respawn: 360, type: "field", lastKill: null, nextSpawn: null, notifyId: null },
   { id: 2, name: "ケルソス", respawn: 360, type: "field", lastKill: null, nextSpawn: null, notifyId: null },
