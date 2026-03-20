@@ -306,6 +306,69 @@ client.on("messageCreate", (message) => {
 
   message.reply("📌 **次湧き予定一覧**\n" + list.join("\n"));
 });
+client.on("messageCreate", (message) => {
+  if (message.author.bot) return;
+  if (message.content !== "/next") return;
+
+  const list = KILL_DATA
+    .filter(d => d.nextSpawn)
+    .sort((a, b) => a.nextSpawn - b.nextSpawn)
+    .map(d => {
+      const boss = BOSSES.find(b => b.id === d.bossId);
+      return `🕒 **${boss.name}** → ${d.nextSpawn.toLocaleString()}`;
+    });
+
+  if (list.length === 0) {
+    return message.reply("⚠️ 登録された次湧きがありません。");
+  }
+
+  message.reply("📌 **次湧き予定一覧**\n" + list.join("\n"));
+});
+client.on("messageCreate", (message) => {
+  if (message.author.bot) return;
+
+  const parts = message.content.trim().split(" ");
+  if (parts[0] !== "/list") return;
+
+  if (parts.length === 1) {
+    const list = KILL_DATA.map(d => {
+      const boss = BOSSES.find(b => b.id === d.bossId);
+
+      const last = d.lastKill ? d.lastKill.toLocaleString() : "未登録";
+      const next = d.nextSpawn ? d.nextSpawn.toLocaleString() : "未登録";
+      const notify = d.notifyTime ? d.notifyTime.toLocaleString() : "未設定";
+
+      return `🔹 **${boss.name}**\n討伐：${last}\n次湧き：${next}\n通知：${notify}`;
+    });
+
+    return message.reply("📋 **ボス一覧**\n\n" + list.join("\n\n"));
+  }
+
+  const hours = parseInt(parts[1]);
+  if (isNaN(hours)) {
+    return message.reply("❌ エラー：数字を入力してください（例：/list 12）");
+  }
+
+  const now = new Date();
+  const limit = new Date(now.getTime() + hours * 60 * 60 * 1000);
+
+  const list = KILL_DATA
+    .filter(d => d.nextSpawn && d.nextSpawn <= limit)
+    .sort((a, b) => a.nextSpawn - b.nextSpawn)
+    .map(d => {
+      const boss = BOSSES.find(b => b.id === d.bossId);
+      return `🕒 **${boss.name}** → ${d.nextSpawn.toLocaleString()}`;
+    });
+
+  if (list.length === 0) {
+    return message.reply(`⏳ ${hours}時間以内に湧くボスはいません。`);
+  }
+
+  message.reply(
+    `📌 **${hours}時間以内に湧くボス**\n` +
+    list.join("\n")
+  );
+});
 
 /* ----------------------------------------
    8. /ping
