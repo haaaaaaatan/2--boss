@@ -1,3 +1,51 @@
+function parseTime(input) {
+  const now = new Date();
+  const parts = input.trim().split(" ");
+
+  // 時刻のみ（HHMM or HHMMSS）
+  if (parts.length === 1) {
+    const t = parts[0];
+
+    if (t.length === 4) {
+      // HHMM
+      const hh = parseInt(t.slice(0, 2));
+      const mm = parseInt(t.slice(2, 4));
+      return new Date(now.getFullYear(), now.getMonth(), now.getDate(), hh, mm, 0);
+    }
+
+    if (t.length === 6) {
+      // HHMMSS
+      const hh = parseInt(t.slice(0, 2));
+      const mm = parseInt(t.slice(2, 4));
+      const ss = parseInt(t.slice(4, 6));
+      return new Date(now.getFullYear(), now.getMonth(), now.getDate(), hh, mm, ss);
+    }
+  }
+
+  // 日付 + 時刻（MMDD HHMM or MMDD HHMMSS）
+  if (parts.length === 2) {
+    const d = parts[0];
+    const t = parts[1];
+
+    const month = parseInt(d.slice(0, 2)) - 1;
+    const day = parseInt(d.slice(2, 4));
+
+    if (t.length === 4) {
+      const hh = parseInt(t.slice(0, 2));
+      const mm = parseInt(t.slice(2, 4));
+      return new Date(now.getFullYear(), month, day, hh, mm, 0);
+    }
+
+    if (t.length === 6) {
+      const hh = parseInt(t.slice(0, 2));
+      const mm = parseInt(t.slice(2, 4));
+      const ss = parseInt(t.slice(4, 6));
+      return new Date(now.getFullYear(), month, day, hh, mm, ss);
+    }
+  }
+
+  return null;
+}
 const KILL_DATA = BOSSES.map(boss => ({
   bossId: boss.id,
   lastKill: null,
