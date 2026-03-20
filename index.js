@@ -288,6 +288,24 @@ client.on("messageCreate", (message) => {
   );
 });
 
+client.on("messageCreate", (message) => {
+  if (message.author.bot) return;
+  if (message.content !== "/next") return;
+
+  const list = KILL_DATA
+    .filter(d => d.nextSpawn)
+    .sort((a, b) => a.nextSpawn - b.nextSpawn)
+    .map(d => {
+      const boss = BOSSES.find(b => b.id === d.bossId);
+      return `🕒 **${boss.name}** → ${d.nextSpawn.toLocaleString()}`;
+    });
+
+  if (list.length === 0) {
+    return message.reply("⚠️ 登録された次湧きがありません。");
+  }
+
+  message.reply("📌 **次湧き予定一覧**\n" + list.join("\n"));
+});
 
 /* ----------------------------------------
    8. /ping
