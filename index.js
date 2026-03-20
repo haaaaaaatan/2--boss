@@ -1,3 +1,8 @@
+function calcNextSpawn(killTime, respawnMin) {
+  const next = new Date(killTime.getTime() + respawnMin * 60000);
+  const notify = new Date(next.getTime() - 10 * 60000);
+  return { next, notify };
+}
 function parseTime(input) {
   const now = new Date();
   const parts = input.trim().split(" ");
